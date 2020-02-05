@@ -120,4 +120,5 @@
 ** 課題2
    GitHub のアカウントを作成し、Pipenv で構築した環境を リモートレポジトリ に登録しなさい
    また登録したレポジトリの URL をメールで送りなさい
-   - アカウント作成の手続きから行うべきコマンドは ~ 
+   - 行うべき手続きは https://github.com/MokkeMeguru/tensorflow_tutorial/blob/master/docs/git/git.org
+   - 勿論、独自の手段を用いて課題を解いて良い
