@@ -19,6 +19,16 @@
     git --version
   #+end_src
   本チュートリアルを進めるには、バージョンが2.0.0 以降である必要があります。
+* アカウントの登録
+  まず GitHub のアカウント登録をして下さい。登録は [[https://github.com/][公式ページ]] から行って下さい。
+  このときのユーザ名とメールアドレス、パスワードを覚えていて下さい。
+
+  次に ローカルコンピュータに GitHub の情報を記録します。(特殊な事情(サブアカウントがあるなど)がない限り、 ~global~ オプションをつけて構いません。)
+  #+begin_src shell
+        git config --global user.name <User Name>
+        git config --global user.email <User Email>
+  #+end_src
+  
 * ローカルレポジトリの作成
   まずローカル環境にレポジトリを作成します。
   レポジトリとは簡単にいってしまえば帳簿付きの保管庫で、過去どのような編集が行われてきたのかという記録が含まれています。
@@ -73,8 +83,7 @@
 * リモートレポジトリの作成
   ローカルレポジトリについての操作が一段落したので、次にリモートレポジトリを作成します。
   
-  まず GitHub のアカウント登録をして下さい。登録は [[https://github.com/][公式ページ]] から行って下さい。
-  アカウントを作成したら、自分のアカウントページにアクセスして下さい。 ~https://github.com/<AccountName>~ というアドレスでアクセスできます。
+  まず、自分のアカウントページにアクセスして下さい。 ~https://github.com/<AccountName>~ というアドレスでアクセスできます。
 
   次に ~Repositories~ のタブへ遷移し、 ~New~ よりレポジトリを作成します。
   
@@ -86,7 +95,7 @@
   接続には次のようなコマンドを用います。(おそらく GitHub 上でも確認できます)
   
   #+begin_src shell
-    git remote add origin https://github.com/<User Name>/<repository Name>
+    git remote add origin https://github.com/<User Name>/<Repository Name>
     git push -u origin master
   #+end_src
 
@@ -99,3 +108,15 @@
   以上で本課題は以上です。お疲れ様でした。
   
   受講生の方は、作成したレポジトリの URL をメールで送って下さい。
+* 付録
+** リモートレポジトリ→ローカルレポジトリ
+   リモートレポジトリをローカルマシンに持ち込むことを ~clone~ と呼びます。
+   
+   #+begin_src shell
+     git clone https://github.com/<User Name>/<Repository Name>
+   #+end_src
+
+   コマンドを実行したフォルダ下に ~<Repository Name>~ と呼ばれるフォルダが生成されたことを確認できます。この中に ~.git~ ~Pipenv~ などのファイル / フォルダが存在していることを確認して下さい。
+** その他の情報
+   今回は branch についての情報を教えていません。branch に関しては、 [[https://git-scm.com/book/ja/v2/Git-%E3%81%AE%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E6%A9%9F%E8%83%BD-%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E3%81%A8%E3%81%AF][公式ページ]] を一通り学習しておくと良いでしょう。(下手な本を買うより安上がりです)
+
