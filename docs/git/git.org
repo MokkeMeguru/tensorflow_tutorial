@@ -1,5 +1,4 @@
-#+options: ':nil
- *:t -:t ::t <:t H:3 \n:t ^:t arch:headline author:t
+#+options: ':nil *:t -:t ::t <:t H:3 \n:t ^:t arch:headline author:t
 #+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
 #+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
 #+options: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
@@ -92,3 +91,12 @@
   #+end_src
 
   コマンドが実行されたら、リモートレポジトリのページを確認してみましょう。
+  
+  [[../../img/created_repo.png]]
+
+
+  はい、セキュリティエラーが出ましたね。 Tensorflow は後方互換性がないので、このようなセキュリティホールは受け入れるしかありません。諦めて下さい。
+
+  以上で本課題は以上です。お疲れ様でした。
+  
+  受講生の方は、作成したレポジトリの URL をメールで送って下さい。
