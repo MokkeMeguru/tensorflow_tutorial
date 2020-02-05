@@ -1,0 +1,5 @@
+*.pygtex
+*.bbl
+*.dvi
+*.pygstyle
+*.tex

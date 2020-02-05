@@ -1,0 +1,123 @@
+#+title: Installation of Tensorflow 1.12
+#+date: 2020-02-05 Wed
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+
+#+language: ja
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+#+options: ':nil *:t -:t ::t <:t \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:t f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+options: H:2 toc:t \n:t
+#+latex_class_options: [dvipdfmx, 11pt, allowframebreaks]
+#+latex_class: beamer
+#+columns: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
+#+beamer_header: \usepackage{tabulary}
+#+beamer_header: \usepackage{amsmath}
+#+beamer_header: \usepackage{minted}
+#+beamer_header: \setbeamertemplate{page number in head/foot}[framenumber]
+#+beamer_header: \setbeamerfont{block body}{size=\tiny}
+#+beamer_header: \setbeamerfont{block title}{size=\small}
+#+beamer_header: \setbeamerfont{block body example}{size=\small}
+#+beamer_theme: Berlin
+#+beamer_color_theme:
+#+beamer_font_theme:
+#+beamer_inner_theme:
+#+beamer_outer_theme:
+#+startup: beamer
+#+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
+* Tensorflow のバージョン問題
+** Tensorflow のバージョン問題
+  - Tensorflowはインストール手順が複雑
+  - 今回扱う Tensorflow はバージョン 1.12.0
+      $\rightarrow$ 動作環境は， *Python 3.6 ∧ Cuda 7 ∧ Cuddn 9* のみ
+\leavevmode\hphantom{}      
+   ⇒ 各バージョンごとに、ホストコンピュータに関わる
+   　 *重大なソフトウェア* を破壊しなければならない
+* Docker か Pipenv か
+** 環境問題の解決方法
+  この問題を解決する方法は、主に2種類方法
+  - Docker を用いた方法
+    - 高コスト / 高柔軟性 / GPUサポートあり
+      ⇒ Linux や Cuda のバージョンが任意なOS環境
+  - Pipenv を用いた方法
+    - 低コスト / 低柔軟性 / GPUサポートなし
+      ⇒  簡易な環境
+\leavevmode\hphantom{}
+  ⇒今回は \structure{Pipenv} を用いて環境構築を行う
+* Pipenv を用いた環境構築
+** Pipenv とは
+   Pipenv は Python のバージョン管理 + パッケージ管理ツール
+*** 設定できる環境例                                         :B_exampleblock:
+    :PROPERTIES:
+    :BEAMER_env: exampleblock
+    :END:
+    #+ATTR_LATEX: :environment tabular :align |l|c|
+    |------------+---------|
+    | Package    | Version |
+    |------------+---------|
+    |------------+---------|
+    | Python     |   3.6.10 |
+    |------------+---------|
+    | Tensorflow |  1.12.0 |
+    | Pandas     |   1.0.0 |
+    | ...        |     ... |
+    |------------+---------|
+** Pipenv で環境構築を行う
+    :PROPERTIES:
+    :BEAMER_opt: allowframebreaks
+    :END:
+   (以下 2020/01 現在)
+   1. Python のインストール
+      ex. ~brew install python~ (macOS)
+   2. Pyenv のインストール
+      ex. ~brew install pyenv~ (macOS)
+       #+LATEX: \framebreak
+   3. Pipenv 環境の構築
+      #+begin_src shell
+        python3 -m pip install pipenv
+        pyenv install 3.6.10
+        # Installed Python-3.6.10 \
+        # to /home/<name>/.pyenv/versions/3.6.10
+        mkdir /path/to/workspace
+        cd /path/to/workspace
+        pipenv install --python \
+               /home/<name>/.pyenv/versions/3.6.10/bin/python
+        pipenv shell
+        python --version # => 3.6.10
+      #+end_src
+       #+LATEX: \framebreak
+   4. Tensorflow のインストールなど
+      #+begin_src shell
+        pyenv install tensorflow==1.12.0
+        pyenv install --dev ipython
+        pyenv install --dev python-language-server[all] # 任意
+      #+end_src
+      ※ GPUサポートがないことに注意
+** 課題1
+ Pipenv 環境を構築しなさい
+ - Windows / macOS / Arch Linux / Ubuntu の環境構築手順は ~ 
+* Git を利用する
+** Git とは
+  Git とは *ソースコードについて* のバージョン管理システム (VCS)
+  GitHub は Git システムに関する Web サービス
+*** 主なワークフロー                                                :B_block:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :END:
+
+    1. プロジェクトを作る (Local)
+    2. プロジェクトをレポジトリとする (Local)
+    3. GitHub 上で レポジトリを作成する (Remote)
+    4. レポジトリ同士を接続する (Local-Remote)
+    5. ソースコードを編集する (Local)
+    6. 編集を Commit (記録)する (Local)
+    7. Commit を GitHub 上に反映する (Remote)
+    8. 5. へ戻る
+** 課題2
+   GitHub のアカウントを作成し、Pipenv で構築した環境を リモートレポジトリ に登録しなさい
+   また登録したレポジトリの URL をメールで送りなさい
+   - アカウント作成の手続きから行うべきコマンドは ~ 
