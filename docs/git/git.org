@@ -78,8 +78,8 @@
 
   次に ~Repositories~ のタブへ遷移し、 ~New~ よりレポジトリを作成します。
   
-  [[../../img/create_repository.png]]
-
+  #+HTML: <img src="../../img/create_repository.png" width="50%">
+  
   Repository name を tensorflow_tutorial 、Description を 適当に書いて下さい。 ~Public~ / ~Private~ は公開するレポジトリか非公開にするレポジトリかの選択ですが、基本的には ~Public~ で良いと思います。(ただし、大学の課題(この授業を除く)を Public にしていると除籍される可能性があります)
 * レポジトリ同士の接続
   ここまでで、それぞれのレポジトリの準備が出来ました。
@@ -92,8 +92,7 @@
 
   コマンドが実行されたら、リモートレポジトリのページを確認してみましょう。
   
-  [[../../img/created_repo.png]]
-
+  #+HTML: <img src="../../img/created_repo.png" width="50%">
 
   はい、セキュリティエラーが出ましたね。 Tensorflow は後方互換性がないので、このようなセキュリティホールは受け入れるしかありません。諦めて下さい。
 
