@@ -1,0 +1,22 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+title: Pipenv ~Windows~
+#+date: <2020-02-06 Thu>
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+* Windows の特徴
+  Windows の特徴は次のとおりです。
+
+  - 盤石なセキュリティ
+  - ドキュメントの充実
+  - 謎の信頼感
+  - 複雑なドキュメント・設定
+
+* Pipenv 環境の構築
+  Pipenv 環境の構築には、 [[https://qiita.com/MeguruMokke/items/b0c2935ab337871995f0][この記事]] を参考にしてください。

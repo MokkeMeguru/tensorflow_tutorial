@@ -60,7 +60,7 @@
     | Package    | Version |
     |------------+---------|
     |------------+---------|
-    | Python     |   3.6.10 |
+    | Python     |   3.6.8  |
     |------------+---------|
     | Tensorflow |  1.12.0 |
     | Pandas     |   1.0.0 |
@@ -80,21 +80,22 @@
       #+begin_src shell
         python3 -m pip install pipenv
         pyenv install 3.6.10
-        # Installed Python-3.6.10 \
-        # to /home/<name>/.pyenv/versions/3.6.10
-        mkdir /path/to/workspace
-        cd /path/to/workspace
+        # Installed Python-3.6.8 \
+        # to /home/<name>/.pyenv/versions/3.6.8
+        mkdir /path/to/tensorflow_tutorial
+        cd /path/to/tensorflow_tutorial
         pipenv install --python \
                /home/<name>/.pyenv/versions/3.6.10/bin/python
         pipenv shell
         python --version # => 3.6.10
+        deactivate
       #+end_src
        #+LATEX: \framebreak
    4. Tensorflow のインストールなど
       #+begin_src shell
-        pyenv install tensorflow==1.12.0
-        pyenv install --dev ipython
-        pyenv install --dev python-language-server[all] # 任意
+        pipenv install tensorflow==1.12.0
+        pipenv install --dev ipython
+        pipenv install --dev python-language-server[all] # 任意
       #+end_src
       ※ GPUサポートがないことに注意
 ** 課題1

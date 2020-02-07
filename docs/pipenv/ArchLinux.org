@@ -1,0 +1,33 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+title: Pipenv ~ArchLinux~
+#+date: <2020-02-06 Thu>
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+* ArchLinux の特徴
+  ArchLinux の特徴は次のとおりです。一般には ArchLinux をよりユーザフレンドリーにした Manjaro Linux が普及しています。
+
+  - OSアップデートが不要
+  - セキュリティ的に安全
+  - 高いカスタマイズ性
+  - コミュニティ・ドキュメントの充実
+  - Linux に関する高い知識の要求
+    
+* Pipenv 環境の構築
+  Pipenv 環境の構築には、次のプロセスを用います。
+  
+  #+begin_src shell
+    sudo pacman -Syyu
+    sudo pacman -S git python pyenv
+    sudo python --m pip install -U pip
+    pip install pipenv
+  #+end_src
+
+  以降は [[https://github.com/MokkeMeguru/tensorflow_tutorial/blob/master/docs/installation.pdf][スライド]] 10枚目以降を参考に環境構築を行って下さい。
+

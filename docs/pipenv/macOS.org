@@ -1,0 +1,34 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+title: Pipenv ~macOS~
+#+date: <2020-02-06 Thu>
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+* macOS の特徴
+  macOS の特徴は次のとおりです。
+
+  - コミュニティの充実
+  - ドキュメントの充実
+  - BSD の知識の要求
+  - なんかかっこいい
+    
+* Pipenv 環境の構築
+  Pipenv 環境の構築には、次のプロセスを用います。すべての手続きが終わったらターミナルを再起動して下さい。
+  
+  #+begin_src shell
+    git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+    echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
+    python -m pip install -U pip
+    python -m pip install  pipenv
+  #+end_src
+
+  以降は [[https://github.com/MokkeMeguru/tensorflow_tutorial/blob/master/docs/installation.pdf][スライド]] 10枚目以降を参考に環境構築を行って下さい。
+
