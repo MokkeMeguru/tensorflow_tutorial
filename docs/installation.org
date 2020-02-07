@@ -100,7 +100,7 @@
       ※ GPUサポートがないことに注意
 ** 課題1
  Pipenv 環境を構築しなさい
- - Windows / macOS / Arch Linux / Ubuntu の環境構築手順は ~ 
+ - Windows / macOS / Arch Linux / Ubuntu の環境構築手順は https://github.com/MokkeMeguru/tensorflow_tutorial/tree/master/docs/pipenv
 * Git を利用する
 ** Git とは
   Git とは *ソースコードについて* のバージョン管理システム (VCS)
