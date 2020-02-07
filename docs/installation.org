@@ -79,15 +79,15 @@
    3. Pipenv 環境の構築
       #+begin_src shell
         python3 -m pip install pipenv
-        pyenv install 3.6.10
+        pyenv install 3.6.8
         # Installed Python-3.6.8 \
         # to /home/<name>/.pyenv/versions/3.6.8
         mkdir /path/to/tensorflow_tutorial
         cd /path/to/tensorflow_tutorial
         pipenv install --python \
-               /home/<name>/.pyenv/versions/3.6.10/bin/python
+               /home/<name>/.pyenv/versions/3.6.8/bin/python
         pipenv shell
-        python --version # => 3.6.10
+        python --version # => 3.6.8M
         deactivate
       #+end_src
        #+LATEX: \framebreak
