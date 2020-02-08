@@ -1,0 +1,13 @@
+* Tensorflow 1.12 Tutorial
+  Tensorflow 1.12 Tutorial の講義資料
+  
+* Roadmap
+  
+** Introduction
+   Tensorflow と機械学習について簡単な紹介 / 全体の講義内容
+
+   [[./docs/introduction.pdf]]
+** Installation
+   Tensorflow のための環境構築
+   
+   [[./docs/installation.pdf]]
