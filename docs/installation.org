@@ -1,5 +1,5 @@
 #+title: Installation of Tensorflow 1.12
-#+date: 2020-02-05 Wed
+#+date: 2020-02-12 Wed
 #+author: MokkeMeguru
 #+email: meguru.mokke@gmail.com
 
