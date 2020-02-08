@@ -1,0 +1,217 @@
+#+title: Installation of Tensorflow 1.12
+#+date: 2020-02-05 Wed
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+
+#+language: ja
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+#+options: ':nil *:t -:t ::t <:t \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:t f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+options: H:2 toc:t \n:t
+#+latex_class_options: [dvipdfmx, 11pt, allowframebreaks]
+#+latex_class: beamer
+#+columns: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
+#+beamer_header: \usepackage{tabulary}
+#+beamer_header: \usepackage{amsmath}
+#+beamer_header: \usepackage{minted}
+#+beamer_header: \setbeamertemplate{page number in head/foot}[framenumber]
+#+beamer_header: \setbeamerfont{block body}{size=\small}
+#+beamer_header: \setbeamerfont{block title}{size=\small}
+#+beamer_header: \setbeamerfont{block body example}{size=\small}
+#+beamer_theme: Berlin
+#+beamer_color_theme:
+#+beamer_font_theme:
+#+beamer_inner_theme:
+#+beamer_outer_theme:
+#+startup: beamer
+#+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
+* Tensorflow 1.12 Tutorial 
+** Tensorflow とその特徴
+*** Tensorflow
+    #+begin_center
+    #+LATEX: { \Large Tensorflow } $\in$ { \Large 機械学習フレームワーク } \\
+    #+LATEX: \vspace{0.2cm}
+    cf. PyTorch, MXNet, DeepLearning4j, etc.
+    #+end_center
+*** Tensorflow の特徴
+    - そこそこ速い (vs PyTorch)
+    - JavaScript などでも使える
+    - 後方互換性はない
+    - ドキュメントもない
+    - fatal な Issue も放置
+* 機械学習
+** 機械学習の種類
+   機械学習は大別して
+   **Generative Model** と **Discriminative Model**
+*** 生成モデル(Generative Model)                              :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+    #+begin_center
+    何らかの **生成過程** を推定する
+    ※ not. 画像やテキストを生成する
+    #+end_center
+    formula.
+    \begin{eqnarray*}
+    P(Y), P(X|Y) &&\\
+    \rightarrow P(Y| X=x) &=& \cfrac{P(X | Y) P(Y)}{P(X)}
+    \end{eqnarray*}
+*** note :noexport:
+    \begin{eqnarray*}
+    P(X)= \Sigma P(X|Y) P(Y)
+        \end{eqnarray*}
+*** 分類モデル(Discriminative Model)                          :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+    #+begin_center
+    何らかの **条件付き確率** を推定する
+    #+end_center
+    formula.
+    \begin{eqnarray*}
+    P( Y | X = x)
+    \end{eqnarray*}
+** 機械学習でできること
+*** 生成モデル(Generative Model)                              :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+    - 教師なし分類
+        (データだけあげると分類してくれる)
+    - 画像生成
+    - テキスト生成
+*** 分類モデル(Discriminative Model)                          :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+    - 教師あり分類
+       (データと正解データからルールを導く)
+** 機械学習でできること: 生成モデル
+   #+CAPTION: Density Estimation Using RealNVP より引用
+   #+ATTR_LATEX: :height 5cm
+    [[../img/_realnvp.png]]
+   #+LATEX: \hfill * RealNVP は画像生成を行うモデル
+** 機械学習でできること: 分類モデル
+   #+CAPTION: Tensorflow Tutorial:  Basic Image Classification より引用
+   #+ATTR_LATEX: :height 5cm
+    [[../img/f_mnist.png]]
+** 生成モデルと分類モデルの組み合わせ
+   #+LATEX: \par
+   #+LATEX: {\Large テキストのスタイル変換} \par
+   \rightarrow 特定著者の文へのスタイル変換
+    #+ATTR_LATEX: :width \linewidth
+    [[../img/style_transfer.png]]
+    生成モデル: 文の生成
+    分類モデル: 文の分類 (今回は著者)
+** 機械学習とルールベース
+   Question: どっちが良い？
+   \rightarrow 人的コスト / 計算コスト / 正確さ / 説明可能性 / 責任能力
+*** Rough Image
+**** ルールーベース                                                   :BMCOL:
+     :PROPERTIES:
+     :BEAMER_col: 0.5
+     :END:
+       #+CAPTION: ルールーベース
+       #+ATTR_LATEX: :width 3.0cm
+       [[../img/rule-base.png]]
+
+**** キカイガクシュウ                                                 :BMCOL:
+     :PROPERTIES:
+     :BEAMER_col: 0.5
+     :END:
+     #+CAPTION: キカイガクシュウ
+     #+ATTR_LATEX: :width 3.5cm
+     [[../img/ml.png]]
+
+* 機械学習に必要なもの
+** 機械学習に必要なもの
+   #+ATTR_LATEX: :width \linewidth
+    [[../img/ml_needs.png]]
+
+   \hfill \Rightarrow Tensorflow は Model を作るフレームワーク
+** データ (Data)
+   \begin{columns}[onlytextwidth, T]
+   \column{70mm}
+   データ (重要度: ★★★)
+   \column{30mm}
+    \includegraphics[width=15mm]{../img/_db.png}
+   \end{columns}
+*** 問題設定とデータが論文を作る
+    #+begin_quote
+    機械学習は、
+    沢山の綺麗なデータと、ちょっとのモデルで出来ている。
+    #+end_quote
+    #+begin_center
+    e.g. 40,000,000,000 単語を含む対話文集合
+    \Leftarrow 対話システム (Meena(Google))
+    cf. 一般的なラノベの新人賞: 30,000 単語くらい / 4ヶ月
+    #+end_center
+** モデル (Model)
+   \begin{columns}[onlytextwidth, T]
+   \column{70mm}
+   モデル (重要度: ★☆☆)
+   \column{30mm}
+    \includegraphics[width=20mm]{../img/_model.png}
+   \end{columns}
+*** 問題設定とデータが論文を作る
+    #+begin_quote
+    先行研究の積み重ねでモデルは作られる
+    #+end_quote
+    #+begin_center
+    文献調査して、再現実験して、そこからモデルを考える
+    今回はここに **ニューラルネットワーク** を用いる
+    #+LATEX: \hspace{0pt plus 1 filll}\par
+    e.g. CNN(Convolutional Neural Network) RNN etc.
+    #+end_center
+** 教師 (Label, etc.)
+   \begin{columns}[onlytextwidth, T]
+   \column{70mm}
+   教師 (重要度: ★★☆)\\
+   * データセット: データと教師
+      \column{30mm}
+    \includegraphics[width=20mm]{../img/_label.png}
+   \end{columns}
+*** 綺麗な教師はモデルより大事
+        #+begin_center
+    モデルに **どのようなものを求めてほしいのか** がここで決まる。
+    \Rightarrow やりたいことと教師が噛み合わないと研究にならない
+    \Rightarrow 誤った教師 (犬の画像に猫と対応付ける) は性能を落とす
+    #+LATEX: \hspace{0pt plus 1 filll}\par
+    e.g. 画像 \leftrightarrow ラベル (犬 / 猫) の対応付け
+    #+end_center
+* この授業で扱う内容
+** この授業で扱う内容
+*** 扱う内容
+ - 適切な問題設定 \rightarrow 誤った研究の防止
+ - 良いデータ，良い教師 \rightarrow まともな結果を出す近道
+ - 正しいフレームワークの使い方 \rightarrow 高速な実装
+*** 扱わない内容
+ - SOTA(最強) モデルの作り方
+* 課題
+** 課題1
+   1. 「MNIST クラス分類」と検索し、データと教師を調べよ
+      #+LATEX: \hspace{0pt plus 1 filll}\par
+   2. Keras というフレームワークの MNIST データセットを調べ
+      次の問いに答えよ
+      1. データの量はどれくらいか
+         訓練 (train) : [ ] 枚
+         テスト (test) : [ ] 枚
+** 課題2
+   1. MNIST データセットにおける、悪い教師の例を提案せよ
+      #+LATEX: \hspace{0pt plus 1 filll}\par
+   2. カメラの写真からボールを検知する、という問題を考える
+      #+LATEX: \hspace{0pt plus 1 filll}\par
+      以下の問に答えよ(正解はないので自由に考えて良い)
+      1. データは何か
+      2. 教師は何か
+      3. モデルは何から何を求めるか
+
+
