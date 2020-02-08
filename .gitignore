@@ -3,3 +3,10 @@
 *.dvi
 *.pygstyle
 *.tex
+*.png~
+/docs/ltximg/
+*.svg
+/img/robot.png
+/img/picture.png
+/img/memo.png
+/img/drawing.png
