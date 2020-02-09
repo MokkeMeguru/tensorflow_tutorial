@@ -3,7 +3,7 @@ import argparse
 import tensorflow as tf
 
 
-class TensorflowHello():
+class TensorflowHelloFeedDict():
     """
     attributes:
     - name: tf.Tensor
@@ -36,7 +36,7 @@ def parse():
 def main():
     args = parse()
     print('[Info] initialize')
-    tf_hello = TensorflowHello()
+    tf_hello = TensorflowHelloFeedDict()
     print('[Info] Call')
     with tf.Session() as sess:
         tf_hello(sess, args.name)
