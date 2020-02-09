@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 import numpy as np
@@ -43,7 +44,7 @@ def train(args):
     loss_op = tf.math.squared_difference(y, y_hat)
 
     #  setup tensorboard log
-    path = Path('./tmp/sgd_func')
+    path = "./tmp/sgd_save"
     tf.summary.scalar('loss', loss_op)
     summary_op = tf.summary.merge_all()
 
@@ -51,7 +52,7 @@ def train(args):
     logs_op = tf.print(
         tf.strings.join(
             [log_op, tf.strings.format('loss - {} / global_step - {}',
-                                       loss_op, global_step)], '/'
+                                       [loss_op, global_step])], '/'
         ))
     # setup hyper parameter
     learning_rate = 1e-3
@@ -87,21 +88,68 @@ def train(args):
                     [summary_op, train_step, logs_op], feed_dict)
                 saver.save(sess, save_path + "/model.ckpt",
                            global_step=global_step)
+                _step = sess.run(global_step)
+                writer.add_summary(summary, _step)
             else:
                 summary, _, = sess.run(
                     [summary_op, train_step], feed_dict)
-            writer.add_summary(summary, step)
 
-def parse():
+def inference(args):
+    sess = tf.InteractiveSession()
+    with tf.variable_scope('inputs'):
+        x = tf.placeholder(dtype=tf.float32, shape=[])
+        y = tf.placeholder(dtype=tf.float32, shape=[])
+
+    # setup model
+    y_hat, log_op = simple_model(x)
+
+    # save model
+    saver = tf.train.Saver()
+    save_path = "./tmp/sgd_save"
+    ckpt = tf.train.get_checkpoint_state(save_path)
+
+    # load checkpoint
+    if ckpt:
+        print('restore variable')
+        last_model = ckpt.model_checkpoint_path
+        saver.restore(sess, last_model)
+    else:
+        raise Exception('for inference, we need trained model')
+
+    while True:
+        # input
+        input_x = input('-->')
+        print('input:', input_x)
+        if not input_x.isdigit():
+            break
+        input_x = int(input_x)
+        evaled_y_hat = sess.run([y_hat], feed_dict={x: input_x})
+        print('output:', evaled_y_hat)
+    sess.close()
+
+
+def parse(task: str = 'training'):
     """Parse Args
     note:
     in ipython, it don't use argparse
     """
-    return None
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('-t', '--task', help='training or inference',
+                        default=None, choices=['training', 'inference'])
+    if hasattr(__builtins__, '__IPYTHON__'):
+        args = parser.parse_args(args=['--task', task])
+    else:
+        args = parser.parse_args()
+    return args
 
-def main():
-    args = parse()
-    train(args)
+
+def main(task: str = 'training'):
+    args = parse(task)
+    if args.task == 'training':
+        train(args)
+    else:
+        inference(args)
+
 
 if __name__ == '__main__':
     main()

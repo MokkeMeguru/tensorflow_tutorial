@@ -30,3 +30,147 @@
 #+startup: beamer
 #+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
 * Save Model
+** モデルを保存する
+   #+LATEX: \fontsize{15pt}{7.2}\selectfont
+   #+begin_center
+   推論をしたい&訓練を継続したい
+   \Rightarrow モデルの重みを保存
+   #+end_center
+** モデルを保存する: コード
+   #+LATEX: \fontsize{7pt}{7.2}\selectfont
+   #+begin_src python
+     # save model
+     saver = tf.train.Saver() # モデル保存のためのオブジェクト
+     save_path = "./tmp/sgd_save"
+     ckpt = tf.train.get_checkpoint_state(save_path)
+
+     with tf.Session() as sess:
+         if ckpt:
+             print('restore variable')
+             last_model = ckpt.model_checkpoint_path
+             # 保存されたモデルの取り出し
+             saver.restore(sess, last_model)
+         else:
+             # 保存されてなければ初期化
+             sess.run(init_op)
+         for step in range(500):
+             # ...
+             if step % 100 == 0:
+                 # ...
+                 # モデルの保存
+                 saver.save(sess, save_path + "/model.ckpt",
+                            global_step=global_step)
+
+   #+end_src
+** モデルを保存する: 出力
+   #+LATEX: \fontsize{7pt}{7.2}\selectfont
+   #+begin_src shell
+     pipenv run python save_model.py --task training
+     # a - 0 / b - 0/loss - 81.5751572 / global_step - 0
+     # a - 0.943696678 / b - 1.84093821/loss - 43.5924454 / global_step - 100
+     # a - 1.7148298 / b - 3.28322673/loss - 48.596 / global_step - 200
+     # a - 2.35165763 / b - 4.41729975/loss - 15.8343315 / global_step - 300
+     # a - 2.79292226 / b - 5.27085066/loss - 7.97473288 / global_step - 400
+     ls -la tmp/sgd_save/
+     # ...
+     # checkpoint
+     # ...
+     # model.ckpt-401.data-00000-of-00001
+     # model.ckpt-401.index
+     # model.ckpt-401.meta
+   #+end_src
+** 訓練の再開
+#+LATEX: \fontsize{7pt}{7.2}\selectfont
+   #+begin_src shell
+     pipenv run python save_model.py --task training
+     # restore variable
+     # a - 2.79316497 / b - 5.27649879/loss - 19.928009 / global_step - 401
+     # a - 3.14751577 / b - 5.94900417/loss - 14.7261763 / global_step - 501
+     # a - 3.46371508 / b - 6.48496056/loss - 7.34989548 / global_step - 601
+     # a - 3.68623185 / b - 6.88744593/loss - 2.83048487 / global_step - 701
+     # a - 3.86673498 / b - 7.20387936/loss - 2.55219769 / global_step - 801
+     ls -la tmp/sgd_save/
+     # ...
+     # checkpoint
+     # ...
+     # model.ckpt-802.data-00000-of-00001
+     # model.ckpt-802.index
+     # model.ckpt-802.meta
+   #+end_src
+   
+* モデルを用いた推論
+** 推論
+   得られたモデルの重みを用いて何らかを入力し、何かを得ること
+   #+LATEX: \hfill{}\\
+   ex1. 画像を入力して、その画像のカテゴリ (犬 / 猫) を得る
+   ex2. ランダムな値を入れて、適当な画像を得る
+   #+ATTR_LATEX: :width 8cm
+   [[../img/inference.png]]
+** 推論: コード
+   :PROPERTIES:
+   :BEAMER_opt: allowframebreaks
+   :END:
+   #+LATEX: \fontsize{7pt}{7.2}\selectfont
+   #+begin_src python
+     def inference(sess):
+         # Interactive Session : 入力などを受け付ける必要がある場合に用いる Session
+         sess = tf.InteractiveSession()
+         with tf.variable_scope('inputs'):
+             x = tf.placeholder(dtype=tf.float32, shape=[])
+             y = tf.placeholder(dtype=tf.float32, shape=[])
+
+         # setup model
+         y_hat, log_op = simple_model(x)
+
+         # save model
+         saver = tf.train.Saver()
+         save_path = "./tmp/sgd_save"
+         ckpt = tf.train.get_checkpoint_state(save_path)
+
+         # load checkpoint
+         if ckpt:
+             print('restore variable')
+             last_model = ckpt.model_checkpoint_path
+             saver.restore(sess, last_model)
+         else:
+             # 訓練済みモデルがなければエラー
+             raise Exception('for inference, we need trained model')
+
+         while True:
+             # input
+             input_x = input('-->')
+             print('input:', input_x)
+             if not input_x.isdigit():
+                 break
+             input_x = int(input_x)
+             evaled_y_hat = sess.run([y_hat], feed_dict={x: input_x})
+             print('output:', evaled_y_hat)
+         sess.close()
+   #+end_src
+** 推論: 出力
+   #+LATEX: \fontsize{7pt}{7.2}\selectfont
+   #+begin_src shell
+     pipenv run python save_model.py --task inference
+     # -->2
+     # input: 2
+     # output: [17.979458]
+     # -->10
+     # input: 10
+     # output: [57.866394]
+     # -->12
+     # input: 12
+     # output: [67.838135]
+     # -->8
+     # input: 8
+     # output: [47.89466]
+     # --> quit
+     # input: quit
+   #+end_src
+* 課題
+** 課題
+  1. save\under{}model.py を用いて訓練してみなさい
+     複数回コードを実行し、loss が下がっていることを確認しなさい
+  2. save\under{}model.py を次のように変更し訓練を行ってみなさい
+     行なった結果の損失の変化の差を観察しなさい
+     - モデルの保存先を ~./tmp/sgd_save2/~ にしなさい。
+     - モデルの最適化関数を ~GradientDescentOptimizer~ から ~AdamOptimizer~ に変更しなさい。
