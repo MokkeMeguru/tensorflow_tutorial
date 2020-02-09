@@ -29,4 +29,158 @@
 #+beamer_outer_theme:
 #+startup: beamer
 #+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
-* 
+* Stochastic Gradient Descent
+** Stochastic Gradient Descent
+  Stochastic Gradient Descent (確率的勾配降下法)
+  #+LATEX: \par
+  パラメータ更新法の一つ
+  \ast おそらく最もシンプルな手法
+  \Rightarrow 本当に最適なパラメータ (最適解) に収束するかは…
+  \begin{eqnarray*}
+  w &:=& w - \eta \nabla Q (w)\\
+  , where && \\
+  w &{\rm is}& {\rm weights} \\
+  Q(w) &{\rm is}& {\rm objective\ function}
+  \end{eqnarray*}
+  パラメータを、目的関数 $Q(w)$ で求められる勾配 $\nabla Q (w)$ を用いて、更新率 $\eta$ で更新する。
+** パラメータ更新法色々
+   - Adam, AdaGrad, RMSProp, etc.
+     Wikipedia を皮切りに探せる
+   - Tensorflow.train.XXXOptimizer
+      [[https://www.tensorflow.org/api_docs/python/tf/keras/optimizers][公式のページ]], [[https://www.tensorflow.org/api_docs/python/tf/keras/optimizers][公式のページ(tf2.x)]]
+   - 最近のホットな更新法
+      [[https://github.com/Luolc/AdaBound][AdaBound / AMSBound]] (tf2.x には今度実装します)
+   - 基本的には Adam を使っておくと良い
+** SGD でパラメータを求める
+   :PROPERTIES:
+   :BEAMER_opt: allowframebreaks
+   :END:
+   
+   #+begin_src python
+     def teacher(x: np.float32):
+         y = 5.0 * x + 8.0
+         return y
+   #+end_src
+*** 求める式, パラメータ
+    #+LATEX: \fontsize{12pt}{7.2}\selectfont
+    \begin{eqnarray*}
+     y = a x &+& b\\
+     \\
+     , where&&\\
+     a&=&5.0 \\b&=&8.0
+     \end{eqnarray*}
+*** モデルの定義
+    #+begin_src python
+      def simple_model(x: tf.Tensor, scope: str = 'simple_model'):
+          weights_scope = scope + '/weights'
+          with tf.variable_scope(weights_scope):
+              a = tf.get_variable(
+                  name=weights_scope + '_a',
+                  shape=[], dtype=tf.float32,
+                  initializer=tf.initializers.constant(
+                      value=0.0, dtype=tf.float32),
+                  trainable=True)
+              b = tf.get_variable(
+                  name=weights_scope + '_b',
+                  shape=[], dtype=tf.float32,
+                  initializer=tf.initializers.constant(
+                      value=0.0, dtype=tf.float32),
+                  trainable=True)
+          with tf.name_scope(scope + '/formula'):
+              y = a * x + b
+          with tf.name_scope(scope + '/log'):
+              log_op = tf.strings.format('a - {} / b - {}', [a, b])
+          return y, log_op
+    #+end_src
+*** 目的関数と勾配
+    #+LATEX: \hfill\\
+    #+LATEX: \fontsize{9pt}{7.2}\selectfont
+    ~loss_op~ は損失関数 \in 目的関数
+    #+LATEX: \fontsize{6pt}{7.2}\selectfont
+    #+begin_src python
+      y_hat, log_op = simple_model(x)
+      loss_op = tf.math.squared_difference(y, y_hat)
+
+      # 更新率
+      learning_rate = 1e-3
+
+      # Stochastic Gradient Descent
+      optimizer = tf.train.GradientDescentOptimizer(
+          learning_rate=learning_rate)
+
+      # 勾配を用いてパラメータを更新する
+      train_step = optimizer.minimize(loss_op)
+    #+end_src
+* Tensorflow とスコープ
+** なぜ スコープ がいるか
+  我々の要望
+  - パラメータを管理したい
+  - 同じパラメータを再利用したい
+  - 同じようなコードを何度も書きたくない。
+** スコープを用いる例: 重み
+   先程のコードから引用
+   #+LATEX: \hfill\\
+   #+LATEX: \hfill\\
+   a とは ~simple_model/weights_a~ という場所にある値
+   ~scope = 'simple_model2'~ のとき、 ~simpel_model2/weights_a~ という場所 \Rightarrow 別の値
+   #+LATEX: \fontsize{6pt}{7.2}\selectfont
+   #+begin_src python
+     scope = 'simple_model'
+     weights_scope = scope + '/weights'
+     with tf.variable_scope(weights_scope):
+         a = tf.get_variable(
+             name=weights_scope + '_a',
+             shape=[], dtype=tf.float32,
+             initializer=tf.initializers.constant(
+                 value=0.0, dtype=tf.float32),
+             trainable=True)
+         b = tf.get_variable(
+             name=weights_scope + '_b',
+             shape=[], dtype=tf.float32,
+             initializer=tf.initializers.constant(
+                 value=0.0, dtype=tf.float32),
+             trainable=True)
+   #+end_src
+** スコープを用いる例: 演算など
+   重みではないけど管理したいものを囲っておく
+   \rightarrow 計算グラフの可視化
+   #+begin_src python
+     with tf.name_scope(scope + '/formula'):
+         y = a * x + b
+     with tf.name_scope(scope + '/log'):
+         log_op = tf.strings.format('a - {} / b - {}', [a, b])
+   #+end_src
+* 計算グラフの可視化
+** 計算グラフの可視化
+   複雑なコードは動作を追うのが難しい
+   - Define by Run \rightarrow すこしずつ実行して見れば良い
+   - Define and Run \rightarrow 計算グラフの構築と実行が別
+   #+LATEX: \hfill\\
+   #+LATEX: \hfill\\
+   何からの手段で計算グラフをわかりやすく確認する必要がある
+   \Rightarrow **視覚化**
+** 計算グラフの可視化: コード
+   #+begin_src python
+     path = './tmp/sgd'
+     # ここまでに定義したすべての変数を初期化するための演算
+     init_op = tf.global_variables_initializer()
+
+     with tf.Session() as sess:
+         # 実際に全部初期化する
+         sess.run(init_op)
+         # path の位置にログを残すためのソケット writer を作る
+         # + 計算グラフを描く
+         writer = tf.summary.FileWriter(path, sess.graph)
+   #+end_src
+   #+LATEX: \framebreak
+** 計算グラフの可視化: 可視化結果
+   ~pipenv run tensorboard --logdir path/to/tmp/sgd~
+   #+LATEX: \hfill{} をターミナルで実行
+   https://localhost:6006 をブラウザで確認する。
+   #+ATTR_LATEX: :width 6cm
+   [[../img/whole_graph.png]]
+* 課題
+** 課題
+  1. sgd\under{}function.py を 実行し、標準出力から a, b, loss の遷移を確認せよ。
+  2. sgd\under{}function.py から path を見つけ、計算グラフの可視化を行ってみよ
+  3. ブラウザから計算グラフを確認し、 ~formula~ を探し出せ
