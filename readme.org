@@ -11,3 +11,15 @@
    Tensorflow のための環境構築
    
    [[./docs/installation.pdf]]
+** Define and Run
+   Tensorflow 1.x の特徴である Define and Run の紹介
+
+   [[./docs/define_and_run.pdf]]
+** Stochastic Gradient Descent
+   確率的勾配降下法の紹介
+
+   [[./docs/sgd.pdf]]
+** Save Model
+   モデルの保存とその推論方法
+   
+   [[./docs/save_model.pdf]]
