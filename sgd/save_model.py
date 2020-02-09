@@ -35,6 +35,9 @@ def train(args):
         x = tf.placeholder(dtype=tf.float32, shape=[])
         y = tf.placeholder(dtype=tf.float32, shape=[])
 
+    # setup global step
+    global_step = tf.Variable(0, False, name='global_step')
+
     # setup model
     y_hat, log_op = simple_model(x)
     loss_op = tf.math.squared_difference(y, y_hat)
@@ -47,13 +50,13 @@ def train(args):
     # setup stdout log
     logs_op = tf.print(
         tf.strings.join(
-            [log_op, tf.strings.format('loss - {}', loss_op)], '/'
+            [log_op, tf.strings.format('loss - {} / global_step - {}',
+                                       loss_op, global_step)], '/'
         ))
     # setup hyper parameter
     learning_rate = 1e-3
 
     # setup optimizer
-    global_step = tf.Variable(0, False, name='global_step')
     optimizer = tf.train.GradientDescentOptimizer(
                 learning_rate=learning_rate)
     train_step = optimizer.minimize(loss_op, global_step=global_step)
