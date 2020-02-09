@@ -1,4 +1,4 @@
-#+title: Session by Run
+#+title: Define and Run
 #+date: 2020-02-12 Wed
 #+author: MokkeMeguru
 #+email: meguru.mokke@gmail.com
@@ -29,5 +29,5 @@
 #+beamer_outer_theme:
 #+startup: beamer
 #+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
-* Session by Run
-  
+* Define and Run
+  Define and Run vs Define by Run
