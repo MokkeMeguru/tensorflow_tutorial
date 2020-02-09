@@ -4,8 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-ipython = "*"
 python-language-server = {extras = ["all"],version = "*"}
+ipython = "*"
+jedi = "==0.14.1"
+
 
 [packages]
 tensorflow = "==1.12.0"
