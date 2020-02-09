@@ -1,0 +1,148 @@
+#+title: Define and Run
+#+date: 2020-02-12 Wed
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+
+#+language: ja
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+#+options: ':nil *:t -:t ::t <:t \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:t f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+options: H:2 toc:t \n:t
+#+latex_class_options: [dvipdfmx, 11pt, allowframebreaks]
+#+latex_class: beamer
+#+columns: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
+#+beamer_header: \usepackage{tabulary}
+#+beamer_header: \usepackage{amsmath}
+#+beamer_header: \usepackage{minted}
+#+beamer_header: \setbeamertemplate{page number in head/foot}[framenumber]
+#+beamer_header: \setbeamerfont{block body}{size=\tiny}
+#+beamer_header: \setbeamerfont{block title}{size=\small}
+#+beamer_header: \setbeamerfont{block body example}{size=\small}
+#+beamer_theme: Berlin
+#+beamer_color_theme:
+#+beamer_font_theme:
+#+beamer_inner_theme:
+#+beamer_outer_theme:
+#+startup: beamer
+#+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
+* Define and Run
+** Define and Run
+   Define and Run vs Define by Run
+   * 計算グラフ: 演算、モデル =  $f(x)$
+*** Define and Run                                            :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :BEAMER_col: 0.5
+    :END:
+    計算グラフの定義と実行
+    Pros:
+    - 高速化のための実装が容易
+    - 初期化などについて特殊な実装ができる
+    Cons:
+    - デバッグが困難
+    ref:
+    - Tensorflow 1.x, Tensorflow 2.x
+    - MxNet, theano, Caffe, etc.
+
+*** Define by Run                                             :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :BEAMER_col: 0.5
+    :END:
+    実行時に計算グラフを定義
+    Pros:
+    - デバッグが容易
+    - Python のインタプリタとの親和性が高い
+    Cons:
+    - 高速化は難しい
+    ref:
+    - PyTorch
+    - Tensorflow 2.x
+
+** Define and Run
+   計算グラフの定義と実行(Tensorflow 1.12)
+ #+begin_src python
+   left = tf.constant(1.0)
+   right = tf.constant(2.0)
+   # ここで計算グラフ (演算) を定義
+   add_op = tf.add(left, right)
+
+   # Session (実行領域) を立ち上げる
+   with tf.Session() as sess:
+       # 実行を行う
+       result = sess.run([add_op])
+       print(result)
+       # => [3.0]
+#+end_src
+** Define by Run
+   実行時に計算グラフを定義(Tensorflow 2.1.0)
+   #+begin_src python
+     left = tf.constant(1.0)
+     right = tf.constant(2.0)
+     # 計算グラフの実行と定義
+     result = tf.add(left, right)
+     print(result)
+     # => [3.0]
+   #+end_src
+* Define and Run を深く見る
+** クラス TensorflowHello
+   TensorflowHello クラス
+   - 初期化子に string 型の引数 name を引き受ける
+   - インスタンスの実行時に session を引き受け、operation #'greeting を実行する
+  #+begin_src python
+    class TensorflowHello():
+        def __init__(self, name: str = 'Jack'):
+            self.name = 'Jack'
+            self.greeting = tf.print(
+                'Hello, Tensorflow! --{}'.format(self.name))
+
+        def __call__(self, sess: tf.Session):
+            sess.run(self.greeting)
+  #+end_src
+** 課題1-1
+   - 次のコードの実行で得られる標準出力を予測せよ。
+     #+begin_src python
+     print('[Info] initialize')
+     tf_hello = TensorflowHello()
+     print('[Info] Call')
+     with tf.Session() as sess:
+         tf_hello(sess)
+     #+end_src
+** 課題1-2
+   - 実際に ~ のコードを実行し予測と比較せよ。
+     #+begin_src shell
+     pipenv run python define_and_run/define_and_run.py
+     #+end_src
+     読み方: pipenv の環境下で、 define\under{}and\under{}run.py を実行する
+     #+LATEX: \vspace{1cm}
+   - また、define\under{}by\under{}run.py を実行しその差を確認せよ。
+     \ast コードを眺めることで define\under{}and\under{}run と define\under{}by\under{}run の違いを確認できる
+* Feed Dict
+** Placeholder と Feed Dict
+   Define and Run の計算グラフ \Rightarrow 鋳型のようなもの
+   1. どこからデータを流し込む？
+       \rightarrow **placeholder**
+   2. 何を流し込む？
+       \rightarrow **feed\under{}dict**
+** クラス TensorflowHelloFeedDict
+   #+begin_src python
+     class TensorflowHelloFeedDict():
+         def __init__(self):
+             # placeholder ここがデータの入り口
+             self.name = tf.placeholder(tf.string)
+             self.greeting = tf.print(tf.strings.format(
+                 'Hello, Tensorflow! --{}', self.name))
+
+         def __call__(self, sess: tf.Session,
+                      name: str = 'Jack'):
+             # feed_dict
+             # self.name という入り口に name を流し込む
+             sess.run(self.greeting,
+                      feed_dict={self.name: name})
+   #+end_src
+** 課題2
+   - feed\under{}dict.py を実行せよ。
