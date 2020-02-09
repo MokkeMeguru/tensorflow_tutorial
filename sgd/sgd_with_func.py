@@ -27,7 +27,8 @@ def simple_model(x: tf.Tensor, scope: str = 'simple_model'):
 
 
 def teacher(x: np.float32):
-    return 5.0 * x + 8.0
+    y = 5.0 * x + 8.0
+    return y
 
 
 def train(args):
