@@ -1,0 +1,32 @@
+#+title: Session by Run
+#+date: 2020-02-12 Wed
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+
+#+language: ja
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+#+options: ':nil *:t -:t ::t <:t \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:t f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+options: H:2 toc:t \n:t
+#+latex_class_options: [dvipdfmx, 11pt, allowframebreaks]
+#+latex_class: beamer
+#+columns: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
+#+beamer_header: \usepackage{tabulary}
+#+beamer_header: \usepackage{amsmath}
+#+beamer_header: \usepackage{minted}
+#+beamer_header: \setbeamertemplate{page number in head/foot}[framenumber]
+#+beamer_header: \setbeamerfont{block body}{size=\tiny}
+#+beamer_header: \setbeamerfont{block title}{size=\small}
+#+beamer_header: \setbeamerfont{block body example}{size=\small}
+#+beamer_theme: Berlin
+#+beamer_color_theme:
+#+beamer_font_theme:
+#+beamer_inner_theme:
+#+beamer_outer_theme:
+#+startup: beamer
+#+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
+* 
