@@ -133,25 +133,44 @@ def train(path_prefix: str = 'tmp'):
     # inputs setting
     with tf.variable_scope('input'):
         if hps.data_params.is_flattened:
-            x = tf.placeholder(
-                    tf.float32,
-                    [None, np.prod(hps.data_params.image_size)])
-            if len(hps.data_params.image_size) == 3:
-                x = tf.reshape(x, [-1] + list(hps.data_params.image_size))
-            elif len(hps.data_params.image_size) == 2:
-                x = tf.reshape(
-                    x, [-1] + list(hps.data_params.image_size) + [1])
-            else:
-                raise NotImplementedError('image shape is NHW or NHWC')
+            shape = [None, np.prod(hps.data_params.image_size)]
         else:
-            x = tf.placeholder(
-                    tf.float32,
-                    [None] + list(hps.data_params.image_size))
-        is_training = tf.placeholder(tf.bool, shape=None)
+            shape = [None] + list(hps.data_params.image_size)
+        x = tf.placeholder(tf.float32, shape)
         y = tf.placeholder(tf.float32, [None, 10])
+        is_training = tf.placeholder(tf.bool, shape=None)
+    _x = tf.reshape(x, [-1, 28, 28, 1])
+        # if hps.data_params.is_flattened:
+        #     if len(hps.data_params.image_size) == 3:
+        #         x = tf.reshape(x, [-1] + list(hps.data_params.image_size))
+        #     elif len(hps.data_params.image_size) == 2:
+        #         x = tf.reshape(
+        #             x, [-1] + list(hps.data_params.image_size) + [1])
+        #     else:
+        #         raise NotImplementedError('image shape is NHW or NHWC')
+    y_hat = model_fn(_x, hps, is_training)
 
-        # input -> model -> output
-    y_hat = model_fn(x, hps=hps, is_training=is_training)
+    # with tf.variable_scope('input'):
+    #     if hps.data_params.is_flattened:
+    #         shape = [None, np.prod(hps.data_params.image_size)]
+    #     else:
+    #         shape = [None] + list(hps.data_params.image_size)
+    #     x = tf.placeholder(tf.float32, [None, 784])
+    
+    #     print('shape', shape)
+    #     # if hps.data_params.is_flattened:
+    #     #     if len(hps.data_params.image_size) == 3:
+    #     #         x = tf.reshape(x, [-1] + list(hps.data_params.image_size))
+    #     #     elif len(hps.data_params.image_size) == 2:
+    #     #         x = tf.reshape(
+    #     #             x, [-1] + list(hps.data_params.image_size) + [1])
+    #     #     else:
+    #     #         raise NotImplementedError('image shape is NHW or NHWC')
+    #     is_training = tf.placeholder(tf.bool, shape=None)
+    #     y = tf.placeholder(tf.float32, [None, 10])
+    # x = tf.reshape(x, [256, 28, 28, 1])
+    # # input -> model -> output
+    # y_hat = model_fn(x, hps=hps, is_training=is_training)
 
     # setup metrics
     with tf.name_scope('metrics'):
