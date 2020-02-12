@@ -94,6 +94,7 @@ def train(args):
                 summary, _, = sess.run(
                     [summary_op, train_step], feed_dict)
 
+
 def inference(args):
     sess = tf.InteractiveSession()
     with tf.variable_scope('inputs'):

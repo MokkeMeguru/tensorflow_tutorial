@@ -8,9 +8,12 @@ python-language-server = {extras = ["all"],version = "*"}
 ipython = "*"
 jedi = "==0.14.1"
 
-
 [packages]
 tensorflow = "==1.12.0"
+matplotlib = "*"
+tqdm = "*"
+pyyaml = "*"
+attrdict = "*"
 
 [requires]
 python_version = "3.6.8"
