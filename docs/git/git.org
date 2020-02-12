@@ -33,11 +33,11 @@
   まずローカル環境にレポジトリを作成します。
   レポジトリとは簡単にいってしまえば帳簿付きの保管庫で、過去どのような編集が行われてきたのかという記録が含まれています。
   
-  以前の課題で作成した ~/workspace~ へ移動して下さい。
+  以前の課題で作成した ~/tensorflow_tutorial~ へ移動して下さい。
   次にそのフォルダ(プロジェクトルート、と呼ぶこともある)でレポジトリを初期化します。
   
   #+begin_src
-  cd /path/to/workspace
+  cd path/to/tensorflow_tutorial (C:\Users\<...>\tensorflow_tutorial)
   git init
   #+end_src
 
