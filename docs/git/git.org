@@ -41,11 +41,11 @@
   git init
   #+end_src
 
-  次に [[https://www.gitignore.io/][gitignore.io]] へアクセスし、 ~python~ を入力して下さい。すると、[[https://www.gitignore.io/api/python][このようなファイル]] が得られるので、これを  ~/workspace/.gitignore~ に保存して下さい。
+  次に [[https://www.gitignore.io/][gitignore.io]] へアクセスし、 ~python~ を入力して下さい。すると、[[https://www.gitignore.io/api/python][このようなファイル]] が得られるので、これを  ~/tensorflow_tutorial/.gitignore~ に保存して下さい。
   これは Python コードを書いていく上で、Git で管理すべきではないファイルを管理から除外するための処理です。その他に除外したいファイルがあれば、 ~.gitignore~ へ追加します。
 * 現在までの編集の記録
   おめでとうございます。ここまでで、ローカル環境にレポジトリを作成することが出来ました。
-  さて、今あなたの ~/workspace~ は次のような構成になっていると思われます。
+  さて、今あなたの ~/tensorflow_tutorial~ は次のような構成になっていると思われます。
   #+begin_example
   - workspace
      |- .git/
