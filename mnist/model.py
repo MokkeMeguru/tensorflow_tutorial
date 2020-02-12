@@ -126,6 +126,7 @@ def model_fn(x: tf.Tensor,
 def train(path_prefix: str = 'tmp'):
     # import parmeter data
     hps = params_utils.parse_params(params.mnist_classification_args)
+    params_utils.export_params(hps, path_prefix)
 
     # load dataset
     dataset = load_mnist(show_info=False)
@@ -139,38 +140,21 @@ def train(path_prefix: str = 'tmp'):
         x = tf.placeholder(tf.float32, shape)
         y = tf.placeholder(tf.float32, [None, 10])
         is_training = tf.placeholder(tf.bool, shape=None)
-    _x = tf.reshape(x, [-1, 28, 28, 1])
-        # if hps.data_params.is_flattened:
-        #     if len(hps.data_params.image_size) == 3:
-        #         x = tf.reshape(x, [-1] + list(hps.data_params.image_size))
-        #     elif len(hps.data_params.image_size) == 2:
-        #         x = tf.reshape(
-        #             x, [-1] + list(hps.data_params.image_size) + [1])
-        #     else:
-        #         raise NotImplementedError('image shape is NHW or NHWC')
-    y_hat = model_fn(_x, hps, is_training)
-
-    # with tf.variable_scope('input'):
-    #     if hps.data_params.is_flattened:
-    #         shape = [None, np.prod(hps.data_params.image_size)]
-    #     else:
-    #         shape = [None] + list(hps.data_params.image_size)
-    #     x = tf.placeholder(tf.float32, [None, 784])
     
-    #     print('shape', shape)
-    #     # if hps.data_params.is_flattened:
-    #     #     if len(hps.data_params.image_size) == 3:
-    #     #         x = tf.reshape(x, [-1] + list(hps.data_params.image_size))
-    #     #     elif len(hps.data_params.image_size) == 2:
-    #     #         x = tf.reshape(
-    #     #             x, [-1] + list(hps.data_params.image_size) + [1])
-    #     #     else:
-    #     #         raise NotImplementedError('image shape is NHW or NHWC')
-    #     is_training = tf.placeholder(tf.bool, shape=None)
-    #     y = tf.placeholder(tf.float32, [None, 10])
-    # x = tf.reshape(x, [256, 28, 28, 1])
-    # # input -> model -> output
-    # y_hat = model_fn(x, hps=hps, is_training=is_training)
+    with tf.variable_scope('input_reshape'):
+        if hps.data_params.is_flattened:
+            if len(hps.data_params.image_size) == 3:
+                reshaped_x = tf.reshape(
+                        x, [-1] + list(hps.data_params.image_size))
+            elif len(hps.data_params.image_size) == 2:
+                reshaped_x = tf.reshape(
+                        x, [-1] + list(hps.data_params.image_size) + [1])
+            else:
+                raise NotImplementedError('image shape is NHW or NHWC')
+        else:
+            reshaped_x = x
+    
+    y_hat = model_fn(reshaped_x, hps, is_training)
 
     # setup metrics
     with tf.name_scope('metrics'):
@@ -190,14 +174,14 @@ def train(path_prefix: str = 'tmp'):
                 loss, name='train_loss')
             train_acc, train_acc_op = tf.metrics.mean(
                 accuracy, name='train_acc')
-            tf.summary.scalar('train/loss', train_loss, collections=['train'])
-            tf.summary.scalar('train/acc', train_acc, collections=['train'])
+            tf.summary.scalar('loss', train_loss, collections=['train'])
+            tf.summary.scalar('acc', train_acc, collections=['train'])
 
         with tf.name_scope('val'):
             val_loss, val_loss_op = tf.metrics.mean(loss, name='val_loss')
             val_acc, val_acc_op = tf.metrics.mean(accuracy, name='val_acc')
-            tf.summary.scalar('val/loss', val_loss, collections=['val'])
-            tf.summary.scalar('val/acc', val_acc, collections=['val'])
+            tf.summary.scalar('loss', val_loss, collections=['val'])
+            tf.summary.scalar('acc', val_acc, collections=['val'])
 
         # metrics initializer
         train_metrics_initialzie_op = tf.variables_initializer(
@@ -231,6 +215,7 @@ def train(path_prefix: str = 'tmp'):
 
     saver = tf.train.Saver()
     save_path = hps.paths.model_path / path_prefix
+    save_path.mkdir(parents=True, exist_ok=True)
     ckpt = tf.train.get_checkpoint_state(save_path)
 
     with tf.Session() as sess:
@@ -255,7 +240,7 @@ def train(path_prefix: str = 'tmp'):
 
         for step in tqdm(range(hps.hyper_parameters.step)):
             batch = dataset.train.next_batch(hps.hyper_parameters.batch_size)
-            sess.run(train_step,
+            sess.run([train_step, train_loss_op, train_acc_op],
                      feed_dict={x: batch[0], y: batch[1], is_training: True})
             # train_log
             if step % 100:
@@ -263,7 +248,7 @@ def train(path_prefix: str = 'tmp'):
                     [train_summary_op, global_step])
                 writer.add_summary(summary, global_step=gstep)
                 sess.run(train_metrics_initialzie_op)
-                saver.save(sess, save_path + '/model.ckpt',
+                saver.save(sess, save_path / Path('model.ckpt'),
                            global_step=global_step)
             # validation log
             if step % 1000:
