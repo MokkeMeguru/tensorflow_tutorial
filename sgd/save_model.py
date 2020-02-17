@@ -132,7 +132,7 @@ def inference(args):
 def parse(task: str = 'training'):
     """Parse Args
     note:
-    in ipython, it don't use argparse
+    in ipython, it doesn't use argparse
     """
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-t', '--task', help='training or inference',

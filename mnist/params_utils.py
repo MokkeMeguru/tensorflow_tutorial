@@ -1,28 +1,8 @@
 import datetime
-from enum import Enum, unique
 from pathlib import Path
 from typing import Dict
 import yaml
 from attrdict import AttrDict
-
-
-@unique
-class ImageValType(str, Enum):
-    RGB_UNSIGNED = 'unsigned'
-    RGB_SIGNED = 'signed'
-    RGB_ABSNORMALISED = 'absnormalized'
-    RGB_NORMALISED = 'normalized'
-
-
-@unique
-class Optimizer(str, Enum):
-    ADAM = 'adam'
-    SGD = 'sgd'
-
-
-@unique
-class Activation(str, Enum):
-    RELU = "relu"
 
 
 def export_params(args,

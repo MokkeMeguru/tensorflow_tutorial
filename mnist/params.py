@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from params_utils import Activation, ImageValType, Optimizer
+from model import Activation, ImageValType, Optimizer
 
 mnist_classification_args = {
     "paths": {
@@ -11,7 +11,7 @@ mnist_classification_args = {
     },
     "hyper_parameters": {
         "learning_rate": 1e-3,
-        "step": 10000,
+        "step": 5000,
         "optimizer": Optimizer.ADAM,
         "batch_size": 256
     },
