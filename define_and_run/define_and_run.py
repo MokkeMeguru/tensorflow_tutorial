@@ -12,7 +12,7 @@ class TensorflowHello():
     """
 
     def __init__(self, name: str = 'Jack'):
-        self.name = 'Jack'
+        self.name = name
         self.greeting = tf.print('Hello, Tensorflow! --{}'.format(self.name))
 
     def __call__(self, sess: tf.Session):
