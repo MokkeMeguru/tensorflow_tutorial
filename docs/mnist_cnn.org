@@ -1,0 +1,223 @@
+#+title: MNIST with CNN
+#+date: 2020-02-19 Wed
+#+author: MokkeMeguru
+#+email: meguru.mokke@gmail.com
+
+#+language: ja
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.3 (Org mode 9.2.6)
+#+options: ':nil *:t -:t ::t <:t \n:t ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:t f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+options: H:2 toc:t \n:t
+#+latex_class_options: [lualatex, 11pt, allowframebreaks]
+#+latex_class: luabeamer
+#+columns: %45ITEM %10BEAMER_env(Env) %10BEAMER_act(Act) %4BEAMER_col(Col) %8BEAMER_opt(Opt)
+#+beamer_header: \usepackage{luatexja}
+#+beamer_header: \usepackage{tabulary}
+#+beamer_header: \usepackage{amsmath}
+#+beamer_header: \usepackage{multimedia}
+#+beamer_header: \usepackage{minted}
+#+beamer_header: \usepackage{media9}
+#+beamer_header: \setbeamertemplate{page number in head/foot}[framenumber]
+#+beamer_header: \setbeamerfont{block body}{size=\tiny}
+#+beamer_header: \setbeamerfont{block title}{size=\small}
+#+beamer_header: \setbeamerfont{block body example}{size=\small}
+#+beamer_theme: Berlin
+#+beamer_color_theme:
+#+beamer_font_theme:
+#+beamer_inner_theme:
+#+beamer_outer_theme:
+#+startup: beamer
+#+BEAMER_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Presentaion agenda}\tableofcontents[currentsection]\end{frame}}
+* MNIST を用いた画像認識
+** MNIST
+   MNIST: 手書き文字データセット
+*** 要素                                                      :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.6
+    :BEAMER_env: block
+    :END:
+    #+LATEX: \fontsize{12pt}{7.2}\selectfont
+    - データ
+        手書き文字の画像
+    - モデル
+        よくわからない計算グラフ
+    - 教師
+        画像と数字(0-9)の対応付け
+*** MNIST                                                             :BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :END:
+    #+ATTR_LATEX: :width 5cm
+    [[file:luaimg/mnist.png]]
+* 計算グラフで登場する演算要素
+** 計算グラフで登場する演算要素
+*** 演算要素の例
+   - Dense Network
+   - CNN (Convolutional Neural Network)
+   - Activation Function
+   - Pooling
+   - (Normalization)
+これらを *複数* ， *うまいこと* 組み合わせて計算グラフを構築する
+*** 組み合わせ数とモデルの性質の関係
+    - 組み合わせ数が多い
+        \rightarrow 複雑な計算、高性能になることもある、沢山のデータが必要
+    - 組み合わせ数が少ない 
+        \rightarrow 簡単な計算、そこそこのデータでもいける
+** Dense Network
+   全結合レイヤー，線形レイヤー etc.
+*** formula (例)                                              :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :BEAMER_col: 0.5
+    :END:
+    #+LATEX: \fontsize{9pt}{7.2}\selectfont
+   \begin{eqnarray*}
+   y &=& W x + b\\
+   , where&& W \in \mathbb{R}^{n\times m},  b \in \mathbb{R}^{n}\\
+     &&      x \in \mathbb{R}^{m}, y \in \mathbb{R}^{nP}\\
+   \end{eqnarray*}
+   x が行列の場合も同様にして計算できる
+*** Code                                                      :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :BEAMER_col: 0.5
+    :END:
+        #+LATEX: \fontsize{9pt}{7.2}\selectfont
+    #+begin_src python
+    y = tf.layers.dense(x,units=128)
+    # x in [64] -> y in [128]
+    #+end_src
+** CNN Convlutional Neual Network
+   畳み込みニューラルネットワーク (詳細は省く)
+   # #+LATEX: \movie[height=1.125in,poster]{}{cnn_animation/convolution_overview.gif}
+   ref: [[https://developers.google.com/machine-learning/practica/image-classification/convolutional-neural-networks][Google の機械学習解説サイト ]]
+   #+ATTR_LATEX: :width 5cm
+    [[file:luaimg/convolution_overview_001.eps]]
+   
+*** 利点
+    - 疎結合: 大きい画像から必要な情報を抽出できる
+    - パラメータ共有: カーネル (薄赤) を複数の画像の位置に適用できる
+      \rightarrow パラメータ数の縮小
+    - 等価表現: 入力の違いは出力でも保持される
+      \rightarrow 変換前後で特徴が落ちにくい
+
+** CNN Code
+   - filters: カーネル (薄赤) を何枚用意するか(フィルター数)
+   - kernel\under{}size: カーネルの大きさ
+   - padding: 端に対する処理 \ast 基本的には SAME で良い
+   #+begin_src python
+     y = tf.layers.conv2d(
+         x, filters=24, kernel_size=[3, 3], padding='SAME')
+   #+end_src
+
+** Activation Function
+   活性化関数
+   線形関数で表すことの出来ない表現を扱うための非線形関数
+   i.g. 例えば線形関数は XOR の関係を学習することが出来ない
+   　　($[0, 1]^{T}, [1, 0 ]^{T} \rightarrow 1, [1, 1]^{T} [0, 0]^{T} \rightarrow 0$)
+*** formula (例)                                              :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.5
+    :BEAMER_env: block
+    :END:
+    #+LATEX: \fontsize{9pt}{7.2}\selectfont
+    \begin{eqnarray*}
+    y &=& {\rm activation\_fn}(x)\\
+    , where && x \in \mathbb{R}^{X} \\
+    && y \in \mathbb{R}^{X}
+    \end{eqnarray*}
+    例: ReLU $$f(x) = max\{0, x\}$$
+*** Code                                                      :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :BEAMER_col: 0.5
+    :END:
+    #+begin_src python
+    y = tf.nn.relu(x)
+    #+end_src
+** Pooling
+   Pooling 次元削減
+   i.g. Max Pooling, Average Pooling
+*** イメージ (Max Pooling)
+    :PROPERTIES:
+   :BEAMER_col: 0.6
+   :BEAMER_env: block
+   :END:
+    #+LATEX: \fontsize{9pt}{7.2}\selectfont
+    ref: [[https://developers.google.com/machine-learning/practica/image-classification/convolutional-neural-networks][Google の機械学習解説サイト ]]
+    #+ATTR_LATEX: :width 5cm
+    [[file:luaimg/pooling.png]]
+*** Code                                                      :B_block:BMCOL:
+    :PROPERTIES:
+    :BEAMER_col: 0.4
+    :BEAMER_env: block
+    :END:
+    
+    #+begin_src python
+    pooling = tf.layers.max_pooling2d(
+            pool_size=2, strides=2)
+    #+end_src
+* 実際にコードを書く
+** CNN を用いたクラス分類のテンプレート Ⅰ
+   CNNを用いてクラス分類する際には、
+   CNN->Activation Function->Pooling を1単位とする場合が多い
+   #+LATEX: \fontsize{8pt}{7.2}\selectfont
+   #+begin_src python
+@add_arg_scope
+def convnet(scope_name: str,
+            x: tf.Tensor,
+            filters: int,
+            kernel_size: List[int] = [5, 5],
+            pool_size: List[int] = [2, 2],
+            activation: Callable = tf.nn.relu):
+    with tf.name_scope(scope_name):
+        conv = tf.layers.conv2d(
+            x, filters=filters, kernel_size=kernel_size, padding='SAME')
+        activation = tf.nn.relu(conv)
+        pooling = tf.layers.max_pooling2d(
+            activation, pool_size=pool_size, strides=2)
+    return pooling
+   #+end_src
+** CNN を用いたクラス分類のテンプレート Ⅱ
+   出力は 10 クラスそれぞれの **確率値** (e.g. 1 は 40%, 7 は 50%)
+   ベクトル \rightarrow 確率ベクトル: softmax 関数を用いると良い
+   $$softmax(x_i) = \cfrac{e^{x_i}} {\Sigma_j e^{y_j}}$$
+
+   #+begin_src python
+   x = tf.layers.dense(x,
+                        units=10,
+                        activation=tf.nn.softmax)
+   #+end_src
+* 訓練とテスト
+** モデルの性能の測り方
+*** モデルは訓練時には限られたデータでしか学習できない
+    #+LATEX: \fontsize{12pt}{7.2}\selectfont
+   \rightarrow 本当に実世界で役に立つのかは不明
+   \Rightarrow 別のデータを用いて性能を測る必要がある
+*** 訓練データ, 検証データ, テストデータ
+    #+LATEX: \fontsize{12pt}{7.2}\selectfont
+    - 訓練データ: モデルの学習(訓練)に使うデータ
+    - 検証データ: *学習中* に性能を予想するためのデータ
+    - テストデータ: *学習後* に性能を測るためのデータ
+* 課題
+** 課題1
+   mnist 画像を python で読み込んで、表示せよ。
+   コードは mnist/task.py の load\under{}mnist 関数にある。
+   #+ATTR_LATEX::width 5cm
+   [[file:luaimg/mnist_show.png]]
+** 課題2
+   モデルと訓練コードを用いて、実際に訓練を行いなさい。
+   モデル: mnist/model.py
+   訓練コード: mnist/task.py
+   #+begin_center
+   ~python task.py -t training -p tmp~
+   #+end_center
+** 課題3
+   訓練済みモデルを用いて、性能を評価しなさい。
+   #+begin_center
+   ~python task.py -t test -p tmp~
+   #+end_center

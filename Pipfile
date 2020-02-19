@@ -7,6 +7,7 @@ verify_ssl = true
 python-language-server = {extras = ["all"],version = "*"}
 ipython = "*"
 jedi = "==0.14.1"
+pillow = "*"
 
 [packages]
 tensorflow = "==1.12.0"
