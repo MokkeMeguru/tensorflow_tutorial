@@ -10,7 +10,7 @@ jedi = "==0.14.1"
 pillow = "*"
 
 [packages]
-tensorflow = "==1.12.0"
+tensorflow = "==1.15.2"
 matplotlib = "*"
 tqdm = "*"
 pyyaml = "*"
