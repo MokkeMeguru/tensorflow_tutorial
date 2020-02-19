@@ -7,10 +7,15 @@ verify_ssl = true
 python-language-server = {extras = ["all"],version = "*"}
 ipython = "*"
 jedi = "==0.14.1"
-
+pillow = "*"
 
 [packages]
 tensorflow = "==1.12.0"
+matplotlib = "*"
+tqdm = "*"
+pyyaml = "*"
+attrdict = "*"
+flask = "*"
 
 [requires]
 python_version = "3.6.8"

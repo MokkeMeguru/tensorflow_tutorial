@@ -94,6 +94,7 @@ def train(args):
                 summary, _, = sess.run(
                     [summary_op, train_step], feed_dict)
 
+
 def inference(args):
     sess = tf.InteractiveSession()
     with tf.variable_scope('inputs'):
@@ -131,7 +132,7 @@ def inference(args):
 def parse(task: str = 'training'):
     """Parse Args
     note:
-    in ipython, it don't use argparse
+    in ipython, it doesn't use argparse
     """
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-t', '--task', help='training or inference',
